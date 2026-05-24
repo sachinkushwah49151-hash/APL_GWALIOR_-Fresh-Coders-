@@ -410,7 +410,11 @@ app.post('/api/assistant/chat', (req, res) => {
   });
 });
 
-// Start express server
-app.listen(PORT, () => {
-  console.log(`SponsorScope AI Event-Based Backend running on port ${PORT}`);
-});
+// Export app for serverless deployment
+module.exports = app;
+
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`SponsorScope AI Event-Based Backend running on port ${PORT}`);
+  });
+}
