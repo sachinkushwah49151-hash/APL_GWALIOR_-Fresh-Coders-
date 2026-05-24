@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AppStateContext = createContext(null);
 
-const BACKEND_URL = 'http://localhost:5000/api';
+const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // Realistic local fallbacks for event-based data
 const LOCAL_SPONSORS = [
