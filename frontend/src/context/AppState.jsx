@@ -89,6 +89,12 @@ const calculateLocalROI = (mId) => {
       spend: s.spend,
       exposureScore: Math.min(Math.round(visibilityBoost), 100),
       impressions: Math.round(visibilityBoost * 145000),
+      engagement: {
+        likes: social.likes,
+        shares: social.shares,
+        comments: social.comments,
+        views: social.likes * 25
+      },
       sentiment: { positive: positiveSentiment, neutral: 20, negative: 10 - (positiveSentiment - 70) },
       roi: parseFloat(roi)
     };
