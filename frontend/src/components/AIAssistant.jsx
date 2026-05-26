@@ -187,7 +187,7 @@ const AIAssistant = () => {
                 {[
                   "Show highest ROI",
                   "Explain engagement",
-                  "Go to Vision Agent",
+                  "Go to Event Agent",
                   "Generate campaign"
                 ].map((txt) => (
                   <button

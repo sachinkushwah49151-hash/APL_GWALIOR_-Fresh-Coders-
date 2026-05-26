@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { useAppState } from '../context/AppState';
 import LiveStadium from '../components/LiveStadium';
 import { 
   Tv, Cpu, ShieldCheck, Heart, Sparkles, 
@@ -9,13 +10,23 @@ import {
 
 const LandingPage = () => {
   const navigate = useNavigate();
+  const { user } = useAppState();
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen bg-dark-950 text-slate-100 flex flex-col font-sans select-none">
       
       {/* Landing Navbar */}
       <nav className="h-20 border-b border-slate-800/40 bg-dark-950/50 backdrop-blur-md px-6 md:px-12 flex items-center justify-between sticky top-0 z-50">
-        <div className="flex items-center gap-2">
+        <div 
+          onClick={() => navigate('/')} 
+          className="flex items-center gap-2 cursor-pointer group"
+        >
           <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-neon-cyan">
             S
           </div>

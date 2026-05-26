@@ -31,7 +31,10 @@ const Sidebar = () => {
     <aside className="w-64 border-r border-slate-800/80 bg-dark-950/80 backdrop-blur-xl flex flex-col h-screen sticky top-0 shrink-0 hidden lg:flex">
       
       {/* Brand Logo Header */}
-      <div className="p-6 border-b border-slate-800 flex flex-col gap-1">
+      <div 
+        onClick={() => navigate('/dashboard')}
+        className="p-6 border-b border-slate-800 flex flex-col gap-1 cursor-pointer hover:bg-slate-900/10 active:scale-[0.99] transition-all"
+      >
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-neon-cyan select-none">
             S
@@ -41,7 +44,7 @@ const Sidebar = () => {
           </span>
         </div>
         <span className="text-[10px] text-cyan-400 font-bold uppercase tracking-wider pl-10">
-          AI Platform
+          AI Workspace
         </span>
       </div>
 

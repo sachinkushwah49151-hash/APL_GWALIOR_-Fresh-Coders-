@@ -34,7 +34,11 @@ const Signup = () => {
         
         {/* Header */}
         <div className="text-center flex flex-col items-center gap-2">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-neon-cyan select-none">
+          <div 
+            onClick={() => navigate('/')}
+            className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-neon-cyan select-none cursor-pointer hover:scale-105 active:scale-95 transition-all"
+            title="Go to Home"
+          >
             S
           </div>
           <h2 className="text-2xl font-black text-white tracking-tight mt-2">Create Workspace</h2>

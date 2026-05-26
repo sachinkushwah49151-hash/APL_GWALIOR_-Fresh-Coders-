@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAppState } from '../context/AppState';
 import { Mail, Lock, Shield, Sparkles } from 'lucide-react';
 
 const Login = () => {
   const { login } = useAppState();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [email, setEmail] = useState('demo@sponsorscope.ai');
   const [password, setPassword] = useState('password123');
@@ -21,14 +22,16 @@ const Login = () => {
     
     const success = login(email, password, role);
     if (success) {
-      navigate('/dashboard');
+      const from = location.state?.from?.pathname || '/dashboard';
+      navigate(from, { replace: true });
     }
   };
 
   const handleGoogleLogin = () => {
     // Simulated Google Login
     login('google.user@gmail.com', 'google_pass', 'Sponsor');
-    navigate('/dashboard');
+    const from = location.state?.from?.pathname || '/dashboard';
+    navigate(from, { replace: true });
   };
 
   return (
@@ -40,7 +43,11 @@ const Login = () => {
         
         {/* Title */}
         <div className="text-center flex flex-col items-center gap-2">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-neon-cyan select-none">
+          <div 
+            onClick={() => navigate('/')}
+            className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-600 flex items-center justify-center font-bold text-white shadow-neon-cyan select-none cursor-pointer hover:scale-105 active:scale-95 transition-all"
+            title="Go to Home"
+          >
             S
           </div>
           <h2 className="text-2xl font-black text-white tracking-tight mt-2">Welcome Back</h2>
