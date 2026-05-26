@@ -16,7 +16,7 @@ const Dashboard = () => {
 
   const activeMatch = matches.find(m => m.id === selectedMatchId) || matches[0];
   
-  if (loading || !analytics || !analytics.sponsors) {
+  if (!analytics || !analytics.sponsors) {
     return (
       <div className="p-8 flex flex-col gap-6 animate-pulse">
         <div className="h-10 bg-slate-800 rounded-xl w-48" />

@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { useAppState } from '../context/AppState';
 import LiveStadium from '../components/LiveStadium';
 import { 
   Tv, Cpu, ShieldCheck, Heart, Sparkles, 
@@ -10,13 +9,6 @@ import {
 
 const LandingPage = () => {
   const navigate = useNavigate();
-  const { user } = useAppState();
-
-  useEffect(() => {
-    if (user) {
-      navigate('/dashboard', { replace: true });
-    }
-  }, [user, navigate]);
 
   return (
     <div className="min-h-screen bg-dark-950 text-slate-100 flex flex-col font-sans select-none">

@@ -20,7 +20,7 @@ const EventAgent = () => {
   const activeMatch = matches.find(m => m.id === selectedMatchId) || matches[0];
   const activeSponsorName = selectedSponsorId.toUpperCase();
 
-  if (loading || !activeEventDetails) {
+  if (!activeEventDetails) {
     return (
       <div className="p-8 flex flex-col gap-6 animate-pulse">
         <div className="h-10 bg-slate-800 rounded-xl w-48" />

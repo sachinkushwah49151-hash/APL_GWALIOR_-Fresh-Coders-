@@ -40,6 +40,67 @@ const LOCAL_SOCIALS = {
   "ceat": { likes: 215000, shares: 34000, comments: 18000, mentions: 38000, spikes: 5 }
 };
 
+// Local fallback calculator for Event details (Exposure Engine)
+const calculateLocalExposure = (mId, sId, eId) => {
+  const eventsList = LOCAL_EVENTS[mId] || LOCAL_EVENTS["match-1"];
+  const event = eventsList.find(e => e.id === eId) || eventsList[0];
+  const match = LOCAL_MATCHES.find(m => m.id === mId) || LOCAL_MATCHES[0];
+  const sponsor = LOCAL_SPONSORS.find(s => s.id === sId);
+  
+  // Weights
+  const eventWeights = { "Boundary (Six)": 1.5, "Boundary (Four)": 1.3, "Wicket": 1.4, "Single": 0.8, "Dot Ball": 0.5 };
+  const eventWeight = eventWeights[event.eventType] || 0.8;
+  const historicalPerf = sponsor.historicalVisibility / 100;
+  const social = LOCAL_SOCIALS[sId] || LOCAL_SOCIALS.ceat;
+  const engagementFactor = 0.8 + (social.likes / 1000000);
+
+  const rawScore = match.importance * eventWeight * historicalPerf * engagementFactor * 100;
+  const exposureScore = Math.round(Math.min(Math.max(rawScore, 0), 100));
+  
+  const baseImpact = event.momentum * 0.8;
+  const eventImpactScore = Math.round(Math.min(baseImpact + (event.runs * 4), 100));
+
+  return {
+    estimatedExposure: exposureScore,
+    visibilityProbability: Math.min(Math.round(exposureScore + (Math.random() * 5)), 99),
+    reachScore: Math.round(exposureScore * 135000),
+    eventImpactScore,
+    engagementOpportunity: eventImpactScore > 80 ? "High Trigger: Deploy Social Boost Now" : "Medium Opportunity",
+    exposureEstimate: Math.round(eventImpactScore * 0.9),
+    eventInfo: event
+  };
+};
+
+// Local fallback calculator for ROI Leaderboard
+const calculateLocalROI = (mId) => {
+  const list = LOCAL_EVENTS[mId] || LOCAL_EVENTS["match-1"];
+  const calculations = LOCAL_SPONSORS.map(s => {
+    const social = LOCAL_SOCIALS[s.id];
+    const sponsorEvents = list.filter(e => e.description.toLowerCase().includes(s.id));
+    const visibilityBoost = 70 + (sponsorEvents.length * 5);
+    const engagementFactor = (social.likes / 12000);
+    const positiveSentiment = 70 + (s.id === 'tata' ? 15 : s.id === 'ceat' ? 5 : 0);
+    const roi = ((visibilityBoost * engagementFactor * (positiveSentiment / 100)) / (s.spend / 100000)).toFixed(2);
+    
+    return {
+      sponsorId: s.id,
+      name: s.name,
+      logo: s.logo,
+      spend: s.spend,
+      exposureScore: Math.min(Math.round(visibilityBoost), 100),
+      impressions: Math.round(visibilityBoost * 145000),
+      sentiment: { positive: positiveSentiment, neutral: 20, negative: 10 - (positiveSentiment - 70) },
+      roi: parseFloat(roi)
+    };
+  }).sort((a, b) => b.roi - a.roi);
+
+  return {
+    matchId: mId,
+    totalEvents: list.length,
+    sponsors: calculations
+  };
+};
+
 export const AppStateProvider = ({ children }) => {
   // Authentication
   const [user, setUser] = useState(() => {
@@ -55,11 +116,11 @@ export const AppStateProvider = ({ children }) => {
   
   // New Timeline Selection Core State
   const [selectedEventId, setSelectedEventId] = useState("e1");
-  const [activeEventDetails, setActiveEventDetails] = useState(null);
+  const [activeEventDetails, setActiveEventDetails] = useState(() => calculateLocalExposure("match-1", "ceat", "e1"));
   
   // Loaded Event Databases
   const [matchEvents, setMatchEvents] = useState(LOCAL_EVENTS["match-1"]);
-  const [analytics, setAnalytics] = useState(null);
+  const [analytics, setAnalytics] = useState(() => calculateLocalROI("match-1"));
   const [loading, setLoading] = useState(false);
 
   // Copilot Chat state
@@ -79,66 +140,7 @@ export const AppStateProvider = ({ children }) => {
     { id: 2, type: 'warning', text: 'Exposure drop warning: Dream11 logo obscured in Over 14.', time: '15m ago' }
   ]);
 
-  // Local fallback calculator for Event details (Exposure Engine)
-  const calculateLocalExposure = (mId, sId, eId) => {
-    const eventsList = LOCAL_EVENTS[mId] || LOCAL_EVENTS["match-1"];
-    const event = eventsList.find(e => e.id === eId) || eventsList[0];
-    const match = matches.find(m => m.id === mId) || matches[0];
-    const sponsor = sponsors.find(s => s.id === sId);
-    
-    // Weights
-    const eventWeights = { "Boundary (Six)": 1.5, "Boundary (Four)": 1.3, "Wicket": 1.4, "Single": 0.8, "Dot Ball": 0.5 };
-    const eventWeight = eventWeights[event.eventType] || 0.8;
-    const historicalPerf = sponsor.historicalVisibility / 100;
-    const social = LOCAL_SOCIALS[sId] || LOCAL_SOCIALS.ceat;
-    const engagementFactor = 0.8 + (social.likes / 1000000);
-
-    const rawScore = match.importance * eventWeight * historicalPerf * engagementFactor * 100;
-    const exposureScore = Math.round(Math.min(Math.max(rawScore, 0), 100));
-    
-    const baseImpact = event.momentum * 0.8;
-    const eventImpactScore = Math.round(Math.min(baseImpact + (event.runs * 4), 100));
-
-    return {
-      estimatedExposure: exposureScore,
-      visibilityProbability: Math.min(Math.round(exposureScore + (Math.random() * 5)), 99),
-      reachScore: Math.round(exposureScore * 135000),
-      eventImpactScore,
-      engagementOpportunity: eventImpactScore > 80 ? "High Trigger: Deploy Social Boost Now" : "Medium Opportunity",
-      exposureEstimate: Math.round(eventImpactScore * 0.9),
-      eventInfo: event
-    };
-  };
-
-  // Local fallback calculator for ROI Leaderboard
-  const calculateLocalROI = (mId) => {
-    const list = LOCAL_EVENTS[mId] || LOCAL_EVENTS["match-1"];
-    const calculations = sponsors.map(s => {
-      const social = LOCAL_SOCIALS[s.id];
-      const sponsorEvents = list.filter(e => e.description.toLowerCase().includes(s.id));
-      const visibilityBoost = 70 + (sponsorEvents.length * 5);
-      const engagementFactor = (social.likes / 12000);
-      const positiveSentiment = 70 + (s.id === 'tata' ? 15 : s.id === 'ceat' ? 5 : 0);
-      const roi = ((visibilityBoost * engagementFactor * (positiveSentiment / 100)) / (s.spend / 100000)).toFixed(2);
-      
-      return {
-        sponsorId: s.id,
-        name: s.name,
-        logo: s.logo,
-        spend: s.spend,
-        exposureScore: Math.min(Math.round(visibilityBoost), 100),
-        impressions: Math.round(visibilityBoost * 145000),
-        sentiment: { positive: positiveSentiment, neutral: 20, negative: 10 - (positiveSentiment - 70) },
-        roi: parseFloat(roi)
-      };
-    }).sort((a, b) => b.roi - a.roi);
-
-    return {
-      matchId: mId,
-      totalEvents: list.length,
-      sponsors: calculations
-    };
-  };
+  // Calculations are resolved on load using local fallbacks and synchronized on backend responses.
 
   // Load matches & analytics
   const refreshData = async () => {
